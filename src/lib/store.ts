@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import type { Progress } from '../types'
+import { questions } from './content'
 import { newCard, review } from './srs'
 
 const KEY = 'zz-progress-v1'
@@ -17,12 +18,30 @@ const defaults = (): Progress => ({
   settings: { newPerDay: 30, theme: 'light', timerMinutes: 50, paperMode: 'template' },
 })
 
+const QIDS = new Set(questions.map((q) => q.id))
+
+/** 旧背诵卡 id（<考点>-card）映射到合并后的判断题 id，其余原样保留 */
+function migrateId(id: string): string {
+  if (QIDS.has(id)) return id
+  if (id.endsWith('-card')) {
+    const next = `q-pd-t-${id.slice(0, -5)}`
+    if (QIDS.has(next)) return next
+  }
+  return id
+}
+
+function migrate(p: Progress): Progress {
+  const remap = <T,>(o: Record<string, T> | undefined) =>
+    Object.fromEntries(Object.entries(o ?? {}).map(([k, v]) => [migrateId(k), v]))
+  return { ...p, answers: remap(p.answers), srs: remap(p.srs), flags: remap(p.flags) }
+}
+
 function load(): Progress {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return defaults()
     const parsed = JSON.parse(raw) as Progress
-    return { ...defaults(), ...parsed, settings: { ...defaults().settings, ...parsed.settings } }
+    return migrate({ ...defaults(), ...parsed, settings: { ...defaults().settings, ...parsed.settings } })
   } catch {
     return defaults()
   }
@@ -69,13 +88,6 @@ export const actions = {
     commit(p)
   },
 
-  rateCard(qid: string, q: number) {
-    const p = { ...state }
-    p.srs = { ...p.srs, [qid]: review(p.srs[qid] ?? newCard(), q) }
-    p.streak = touchStreak(p)
-    commit(p)
-  },
-
   toggleFlag(qid: string, key: 'fuzzy' | 'starred') {
     const f = state.flags[qid] ?? {}
     commit({ ...state, flags: { ...state.flags, [qid]: { ...f, [key]: !f[key] } } })
@@ -101,7 +113,7 @@ export const actions = {
 
   importJson(raw: string) {
     const parsed = JSON.parse(raw) as Progress
-    commit({ ...defaults(), ...parsed })
+    commit(migrate({ ...defaults(), ...parsed }))
   },
 
   reset() {

@@ -45,12 +45,13 @@ const subjects = fs.existsSync(subjectDir)
 const questions = read('questions.json', [])
 const shizheng = read('questions_shizheng.json', [])
 questions.push(...shizheng)
-questions.push(...read('questions_judge.json', []))
 questions.push(...read('questions_mcq.json', []))
 questions.push(...read('questions_mcq2.json', []))
 questions.push(...read('questions_hats.json', []))
 questions.push(...read('questions_zhenti.json', []))
-questions.push(...read('questions_judge2.json', []))
+// 判断题库：背诵卡与判断题合并后的唯一来源，已包含旧题库里的判断题，避免重复打包
+questions.splice(0, questions.length, ...questions.filter((q) => q.type !== 'judge'))
+questions.push(...read('questions_panduan.json', []))
 // 专题按文件拆分：知识点/parts/<subject>-<no>.json，按文件名排序合并
 const partsDir = path.join(SRC, 'parts')
 for (const s of subjects) {
@@ -65,26 +66,6 @@ for (const s of subjects) {
 
 const timeline = read('timeline.json', [])
 const mindmaps = read('mindmaps.json', [])
-
-// 背诵卡由考点自动生成，源文件里不再手写，避免同一句话维护两遍
-for (const s of subjects) {
-  for (const p of s.parts ?? []) {
-    for (const pt of p.points ?? []) {
-      const exists = questions.some((q) => q.type === 'card' && q.partId === p.id && q.stem === pt.title)
-      if (exists) continue
-      questions.push({
-        id: `${pt.id}-card`,
-        type: 'card',
-        subject: s.id,
-        partId: p.id,
-        stem: pt.title,
-        answer: pt.core,
-        explain: [pt.quote, ...(pt.detail ?? [])].join(' '),
-        refs: pt.refs ?? [],
-      })
-    }
-  }
-}
 
 const LETTER = /^[A-D]$/
 const seenPoint = new Set()

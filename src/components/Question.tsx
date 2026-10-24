@@ -48,7 +48,9 @@ export function QuestionBody({ q, picked, onPick, revealed, index, total }: Body
     <>
       <div className="qhead">
         <span className="tag primary">{SUBJECT_NAMES[q.subject].short}</span>
-        <span className="tag">{q.type === 'single' ? '单选' : q.type === 'multi' ? '多选' : '判断'}</span>
+        <span className="tag">
+          {q.type === 'single' ? '单选' : q.type === 'multi' ? '多选' : '判断'}
+        </span>
         {total ? (
           <span className="spacer" />
         ) : null}
@@ -61,6 +63,11 @@ export function QuestionBody({ q, picked, onPick, revealed, index, total }: Body
 
       <div className="qstem">{q.stem}</div>
       {q.type === 'multi' ? <div className="muted tiny" style={{ marginTop: 6 }}>多选：少选、错选均不得分</div> : null}
+      {q.type === 'judge' ? (
+        <div className="muted tiny" style={{ marginTop: 6 }}>
+          判断下列说法是否正确
+        </div>
+      ) : null}
 
       <div className="options">
         {opts.map((o, i) => {
@@ -89,6 +96,9 @@ export function QuestionBody({ q, picked, onPick, revealed, index, total }: Body
 export function Feedback({ q, grade, picked }: { q: Question; grade: Grade; picked: string[] }) {
   const right = correctLetters(q)
   const gain = scoreOf(q, grade)
+  // 判断题用文字而不是 T/F，避免读成字母选项
+  const label = (letters: string[]) =>
+    q.type === 'judge' ? (letters[0] === 'T' ? '正确' : '错误') : letters.join('')
   return (
     <div className="explain">
       <div className={`verdict ${grade.correct ? 'ok' : 'bad'}`}>
@@ -114,8 +124,8 @@ export function Feedback({ q, grade, picked }: { q: Question; grade: Grade; pick
 
       <div className="why">
         <span className="muted">正确答案：</span>
-        <b>{right.join('')}</b>
-        {picked.length ? <span className="muted">（你选 {picked.join('') || '无'}）</span> : null}
+        <b>{label(right)}</b>
+        {picked.length ? <span className="muted">（你选 {label(picked)}）</span> : null}
       </div>
 
       <div className="why">{q.explain}</div>

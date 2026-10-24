@@ -84,9 +84,10 @@ a { color: var(--red); text-decoration: none; }
   position: sticky;
   top: 0;
   z-index: 20;
-  margin: 0 -14px;
-  padding: 0 14px 12px;
-  background: var(--bg);
+  margin: 0 -14px 12px;
+  padding: 0 14px;
+  /* 只让红色题头自己有背景；整层刷底色会在粘顶时留下一条灰带 */
+  background: transparent;
 }
 
 .topbar {
@@ -227,9 +228,36 @@ a { color: var(--red); text-decoration: none; }
   box-shadow: 0 2px 8px rgba(193, 16, 46, 0.22);
 }
 .btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.danger {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #fff;
+}
 .btn.wide { width: 100%; }
 .btn:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
 .btn.sm { padding: 7px 12px; font-size: 13.5px; border-radius: 8px; }
+
+/* 应用内确认框：Android WebView 不保证显示原生 confirm */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+}
+.dialog {
+  width: min(360px, 100%);
+  padding: 20px 20px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+}
+.dialog h2 { margin: 0 0 8px; font-size: 17px; }
+.dialog p { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.dialog-actions .btn { min-width: 88px; }
 
 .chip {
   display: inline-flex; align-items: center; gap: 6px;

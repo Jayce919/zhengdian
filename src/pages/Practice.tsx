@@ -1,20 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { QType, Question, SubjectId } from '../types'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { Question, SubjectId } from '../types'
 import { questions, SUBJECT_ORDER, SUBJECT_NAMES, subjects } from '../lib/content'
 import { actions, useProgress } from '../lib/store'
 import { isDue } from '../lib/srs'
 import { grade, shuffle } from '../lib/scoring'
-import { canLeave, setNavGuard } from '../lib/navGuard'
+import { requestLeave, setNavGuard } from '../lib/navGuard'
+import { confirmDialog } from '../lib/confirm'
 import { Feedback, QuestionBody } from '../components/Question'
 
 type Scope = 'due' | 'new' | 'mistakes' | 'all'
 type Phase = 'setup' | 'run' | 'done'
 
-const TYPES: { key: QType; label: string }[] = [
+const TYPES: { key: string; label: string }[] = [
   { key: 'single', label: '单选' },
   { key: 'multi', label: '多选' },
   { key: 'judge', label: '判断' },
-  { key: 'card', label: '背诵卡' },
 ]
 
 const SCOPES: { key: Scope; label: string }[] = [
@@ -37,7 +37,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
   }, [])
 
   const [subject, setSubject] = useState<SubjectId | 'all'>(boot?.s.subject ?? 'all')
-  const [types, setTypes] = useState<Set<QType>>(() => new Set(boot?.s.types ?? ['single', 'multi']))
+  const [types, setTypes] = useState<Set<string>>(() => new Set(boot?.s.types ?? ['single', 'multi']))
   const [scope, setScope] = useState<Scope>(boot?.s.scope ?? (autoMistakes ? 'mistakes' : 'due'))
   const [limit, setLimit] = useState(boot?.s.limit ?? 20)
 
@@ -50,7 +50,6 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
   const [idx, setIdx] = useState(boot ? Math.min(boot.s.idx, boot.queue.length - 1) : 0)
   const [picked, setPicked] = useState<string[]>(boot?.s.picked ?? [])
   const [revealed, setRevealed] = useState(boot?.s.revealed ?? false)
-  const [cardOpen, setCardOpen] = useState(boot?.s.cardOpen ?? false)
   const [tally, setTally] = useState(boot?.s.tally ?? { right: 0, total: 0 })
 
   // 作答进度实时存入会话，刷新、切后台被回收后还能接着做
@@ -61,14 +60,16 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
       idx,
       picked,
       revealed,
-      cardOpen,
       tally,
       subject,
       types: [...types],
       scope,
       limit,
     })
-  }, [phase, queue, idx, picked, revealed, cardOpen, tally, subject, types, scope, limit])
+  }, [phase, queue, idx, picked, revealed, tally, subject, types, scope, limit])
+
+  // 已确认离开时，跳转本身会触发一次 popstate，别再弹一次
+  const leaving = useRef(false)
 
   // 离开前确认；确认离开才清掉会话，避免下次意外续上
   useEffect(() => {
@@ -76,24 +77,31 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
       setNavGuard(null)
       return
     }
-    setNavGuard(() => {
-      if (!window.confirm('本次练习还没做完，离开会清空这一组的作答，确定离开？')) return false
-      clearSession()
-      return true
+    setNavGuard((_to, proceed) => {
+      confirmDialog({
+        title: '离开本次练习？',
+        message: '这一组还没做完，离开会清空已作答的内容。',
+        okText: '离开',
+        cancelText: '继续做题',
+        danger: true,
+      }).then((ok) => {
+        if (!ok) return
+        leaving.current = true
+        clearSession()
+        proceed()
+      })
     })
     return () => setNavGuard(null)
   }, [phase])
 
-  // Android 16 预测性返回：练习中按返回先回到设置，而不是退出应用
+  // Android 16 预测性返回：练习中按返回先弹确认，而不是退出应用
   useEffect(() => {
     if (phase !== 'run') return
     history.pushState({ zz: 'practice-run' }, '')
     const onPop = () => {
-      if (!canLeave('practice')) {
-        history.pushState({ zz: 'practice-run' }, '')
-        return
-      }
-      setPhase('setup')
+      if (leaving.current) return
+      history.pushState({ zz: 'practice-run' }, '')
+      requestLeave('practice', () => setPhase('setup'))
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -113,7 +121,6 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
     setTally({ right: 0, total: 0 })
     setPicked([])
     setRevealed(false)
-    setCardOpen(false)
     setPhase('run')
   }
 
@@ -125,13 +132,6 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
     setTally((t) => ({ right: t.right + (g.correct ? 1 : 0), total: t.total + 1 }))
   }
 
-  function rate(qv: number) {
-    if (!q) return
-    actions.rateCard(q.id, qv)
-    setTally((t) => ({ right: t.right + (qv >= 3 ? 1 : 0), total: t.total + 1 }))
-    next()
-  }
-
   function next() {
     if (idx + 1 >= queue.length) {
       clearSession()
@@ -141,7 +141,6 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
     setIdx(idx + 1)
     setPicked([])
     setRevealed(false)
-    setCardOpen(false)
   }
 
   if (phase === 'setup') {
@@ -228,8 +227,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
 
   if (!q) return <div className="empty">没有符合条件的题目</div>
 
-  const isCard = q.type === 'card'
-  const g = isCard || revealed ? grade(q, picked) : null
+  const g = revealed ? grade(q, picked) : null
 
   return (
     <>
@@ -251,39 +249,8 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
         </button>
       </div>
 
-      <div className={revealed && !isCard ? 'split' : undefined}>
+      <div className={revealed ? 'split' : undefined}>
         <div className="card">
-          {isCard ? (
-            <>
-              <div className="qhead">
-                <span className="tag primary">{SUBJECT_NAMES[q.subject].short}</span>
-                <span className="tag">背诵卡</span>
-              </div>
-              <div className="qstem card-front">{q.stem}</div>
-              {cardOpen ? (
-                <>
-                  <div className="quote">{q.answer as string}</div>
-                  <div className="muted small">{q.explain}</div>
-                  <div className="refs">出处：{q.refs.join('；')}</div>
-                  <div className="toolbar" style={{ marginTop: 14 }}>
-                    <button className="btn" onClick={() => rate(1)}>
-                      忘了
-                    </button>
-                    <button className="btn" onClick={() => rate(3)}>
-                      模糊
-                    </button>
-                    <button className="btn primary" onClick={() => rate(5)}>
-                      记得
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <button className="btn primary wide" style={{ marginTop: 16 }} onClick={() => setCardOpen(true)}>
-                  显示答案
-                </button>
-              )}
-            </>
-          ) : (
             <>
               <QuestionBody q={q} picked={picked} onPick={setPicked} revealed={revealed} index={idx} total={queue.length} />
               <div className="toolbar" style={{ marginTop: 16 }}>
@@ -310,10 +277,9 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
                 )}
               </div>
             </>
-          )}
         </div>
 
-        {revealed && !isCard && g ? (
+        {revealed && g ? (
           <div className="card sticky">
             <h2>解析</h2>
             <Feedback q={q} grade={g} picked={picked} />
@@ -328,7 +294,7 @@ function build(
   all: Question[],
   p: ReturnType<typeof useProgress>,
   subject: SubjectId | 'all',
-  types: Set<QType>,
+  types: Set<string>,
   scope: Scope,
   limit: number,
 ): Question[] {
@@ -358,10 +324,9 @@ interface PracticeSession {
   idx: number
   picked: string[]
   revealed: boolean
-  cardOpen: boolean
   tally: { right: number; total: number }
   subject: SubjectId | 'all'
-  types: QType[]
+  types: string[]
   scope: Scope
   limit: number
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { useRoute, segments } from './lib/router'
-import { canLeave } from './lib/navGuard'
+import { requestLeave } from './lib/navGuard'
 import { useProgress } from './lib/store'
 import Home from './pages/Home'
 import Practice from './pages/Practice'
@@ -11,6 +11,7 @@ import TimelinePage from './pages/Timeline'
 import Stats from './pages/Stats'
 import Settings from './pages/Settings'
 import Icon from './components/Icon'
+import ConfirmHost from './components/ConfirmHost'
 
 const NAV = [
   { key: 'home', label: '首页', ico: 'home' },
@@ -36,7 +37,7 @@ export default function App() {
   // 所有跳转都过一道拦截：练习/考试进行中先确认再离开
   const go = useCallback(
     (to: string) => {
-      if (canLeave(to)) nav(to)
+      requestLeave(to, () => nav(to))
     },
     [nav],
   )
@@ -114,6 +115,8 @@ export default function App() {
           </button>
         ))}
       </nav>
+
+      <ConfirmHost />
     </div>
   )
 }

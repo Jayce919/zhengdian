@@ -1,6 +1,6 @@
 export type SubjectId = 'mayuan' | 'maozhongte' | 'xisixiang' | 'shigang' | 'sifa' | 'shizheng'
 
-export type QType = 'card' | 'single' | 'multi' | 'judge'
+export type QType = 'single' | 'multi' | 'judge'
 
 export interface Confusion {
   a: string
@@ -51,6 +51,10 @@ export interface Question {
   distractors?: Record<string, { why: string; trap: Trap }>
   refs: string[]
   difficulty?: number
+  /** 题目来源：zhenti / textbook / confusion / card 等 */
+  source?: string
+  /** 背诵判断对应的考点 */
+  pointId?: string
 }
 
 export interface Weights {

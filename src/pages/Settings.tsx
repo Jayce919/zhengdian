@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { actions, useProgress } from '../lib/store'
 import { decodeProgress, encodeProgress, summarize } from '../lib/syncCode'
+import { confirmDialog } from '../lib/confirm'
 
 export default function Settings({ nav }: { nav: (to: string) => void }) {
   const p = useProgress()
@@ -36,7 +37,15 @@ export default function Settings({ nav }: { nav: (to: string) => void }) {
 
   async function importCode() {
     if (!inCode.trim()) return
-    if (!confirm('导入会覆盖本机全部做题进度，确认继续？')) return
+    if (
+      !(await confirmDialog({
+        title: '导入进度码？',
+        message: '导入会覆盖本机全部做题进度、错题本和模考记录。',
+        okText: '覆盖导入',
+        danger: true,
+      }))
+    )
+      return
     try {
       const text = await decodeProgress(inCode)
       const s = summarize(text)
@@ -165,8 +174,14 @@ export default function Settings({ nav }: { nav: (to: string) => void }) {
           </button>
           <button
             className="btn sm"
-            onClick={() => {
-              if (!confirm('导入 JSON 会覆盖当前全部进度，确认继续？')) return
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: '导入 JSON？',
+                message: '导入会覆盖当前全部进度、错题本和模考记录。',
+                okText: '覆盖导入',
+                danger: true,
+              })
+              if (!ok) return
               try {
                 actions.importJson(json)
                 setMsg('导入成功')
@@ -180,11 +195,16 @@ export default function Settings({ nav }: { nav: (to: string) => void }) {
           </button>
           <button
             className="btn sm"
-            onClick={() => {
-              if (confirm('确认清空全部进度？此操作不可撤销。')) {
-                actions.reset()
-                setMsg('已清空')
-              }
+            onClick={async () => {
+              const ok = await confirmDialog({
+                title: '清空全部进度？',
+                message: '做题记录、错题本、模考成绩和连续天数都会删除，此操作不可撤销。',
+                okText: '清空',
+                danger: true,
+              })
+              if (!ok) return
+              actions.reset()
+              setMsg('已清空')
             }}
           >
             清空进度

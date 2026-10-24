@@ -3,7 +3,8 @@ import type { Question, SubjectId } from '../types'
 import { questions, weights, SUBJECT_NAMES, SUBJECT_ORDER, subjects } from '../lib/content'
 import { actions, useProgress } from '../lib/store'
 import { grade, scoreOf, shuffle } from '../lib/scoring'
-import { canLeave, setNavGuard } from '../lib/navGuard'
+import { requestLeave, setNavGuard } from '../lib/navGuard'
+import { confirmDialog } from '../lib/confirm'
 import { Feedback, QuestionBody } from '../components/Question'
 
 type Stage = 'setup' | 'run' | 'result'
@@ -150,16 +151,28 @@ export default function Exam({ nav }: { nav: (to: string) => void }) {
   )
   const startedAt = useRef(boot?.s.startedAt ?? 0)
 
+  // 已确认离开时，跳转本身会触发一次 popstate，别再弹一次
+  const leaving = useRef(false)
+
   // 离开前确认；确认离开才清掉会话，避免下次意外续上
   useEffect(() => {
     if (stage !== 'run') {
       setNavGuard(null)
       return
     }
-    setNavGuard(() => {
-      if (!window.confirm('本次考试还没交卷，离开会清空作答，确定离开？')) return false
-      clearSession()
-      return true
+    setNavGuard((_to, proceed) => {
+      confirmDialog({
+        title: '离开本次考试？',
+        message: '还没交卷，离开会清空本次作答，成绩不会记录。',
+        okText: '离开',
+        cancelText: '继续考试',
+        danger: true,
+      }).then((ok) => {
+        if (!ok) return
+        leaving.current = true
+        clearSession()
+        proceed()
+      })
     })
     return () => setNavGuard(null)
   }, [stage])
@@ -183,11 +196,9 @@ export default function Exam({ nav }: { nav: (to: string) => void }) {
     if (stage !== 'run') return
     history.pushState({ zz: 'exam-run' }, '')
     const onPop = () => {
-      if (!canLeave('exam')) {
-        history.pushState({ zz: 'exam-run' }, '')
-        return
-      }
-      setStage('setup')
+      if (leaving.current) return
+      history.pushState({ zz: 'exam-run' }, '')
+      requestLeave('exam', () => setStage('setup'))
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
