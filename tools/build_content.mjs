@@ -49,8 +49,8 @@ questions.push(...read('questions_mcq.json', []))
 questions.push(...read('questions_mcq2.json', []))
 questions.push(...read('questions_hats.json', []))
 questions.push(...read('questions_zhenti.json', []))
-// 判断题库：背诵卡与判断题合并后的唯一来源，已包含旧题库里的判断题，避免重复打包
-questions.splice(0, questions.length, ...questions.filter((q) => q.type !== 'judge'))
+// 判断题库：背诵卡与判断题合并后的唯一来源；旧判断题与旧背诵卡（type=card）都不再打包
+questions.splice(0, questions.length, ...questions.filter((q) => q.type !== 'judge' && q.type !== 'card'))
 questions.push(...read('questions_panduan.json', []))
 // 专题按文件拆分：知识点/parts/<subject>-<no>.json，按文件名排序合并
 const partsDir = path.join(SRC, 'parts')

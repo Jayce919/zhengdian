@@ -41,7 +41,7 @@ python 工具/fix_bank.py       # 自动清洗，默认试运行，--apply 才�
 
 ```
 知识点/parts/*.json        85 个专题、1054 个考点
-知识点/questions*.json     11 个题库文件、构建后 2379 道题
+知识点/questions*.json     11 个题库文件、构建后 2245 道题
         │  npm run content（tools/build_content.mjs）
         ▼
 src/data/*.json            subjects / questions / timeline / mindmaps / meta
@@ -86,6 +86,7 @@ cd 政治刷题App && npm run content && npm run doc && npm run build
 | 练习/考试中底部导航点了没反应 | 原生 `window.confirm` 在 WebView 里可能不显示、被静默取消；改为应用内确认框 `ConfirmHost`，确认后才清会话并跳转 | `lib/confirm.ts`、`components/ConfirmHost.tsx`、`App.tsx`、`Practice.tsx`、`Exam.tsx`、`Settings.tsx` |
 | 确认离开后弹出两次确认 | 确认后 `nav()` 改 hash 会触发练习页自己的 `popstate`；加 `leaving` 标志忽略这次事件 | `Practice.tsx`、`Exam.tsx` |
 | 粘顶题头下方有一条灰带 | `.topbar-wrap` 整层刷了页面底色，滚动时连标题下的 12px 一起冻住；改为只让红色卡片有背景，间距用 `margin-bottom` | `styles.css` |
+| 练习中无法回看上一题 | 每题记一份作答快照（`records`），新增「上一题」；回看时恢复当时选项与解析，刷新后仍可回看 | `Practice.tsx` |
 
 验证：`tsc`、`build` 通过；Playwright 脚本 26 项断言通过（离开确认、取消不丢、刷新恢复、倒计时、到期自动交卷、不限时、aria、对比度）。
 
@@ -142,7 +143,7 @@ cd 政治刷题App && npm run content && npm run doc && npm run build
 - 修正 2020 年第 4 题编号错位：原 `q-zt-2020-04` 实为第 14 题，已改名 `q-zt-2020-14`，
   真正的第 4 题（列宁一国胜利论）按 PDF 补入
 - 答案核对：2013–2018、2020 与答案键逐题一致；2023 第 19 题按理论取 ABC（OCR 的 ABCD 有误）
-- 现在：594 道真题、**2379 道构建题**
+- 现在：594 道真题、**2245 道构建题**
 
 新增工具：`工具/extract_exam_questions.py`、`工具/verify_zhenti_coverage.py`、
 `工具/fix_2020_q4_mislabel.py`、`工具/ocr_answer_keys.py`。
@@ -195,7 +196,7 @@ cd 政治刷题App && npm run content && npm run doc && npm run build
 ```bash
 cd 政治刷题App
 npx tsc --noEmit                                  # 0 error
-npm run content                                   # 打包完成：1054 考点 / 2379 题
+npm run content                                   # 打包完成：1054 考点 / 2245 题
 npm run doc
 npm run build
 cd .. && python 工具/bank_audit.py                # 只剩 3 类误报

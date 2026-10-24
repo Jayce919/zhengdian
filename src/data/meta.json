@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-24T07:31:44.104Z",
+  "generatedAt": "2026-10-24T08:08:17.214Z",
   "points": 1054,
-  "questions": 2379,
+  "questions": 2245,
   "bySubject": {
-    "mayuan": 723,
+    "mayuan": 705,
     "shizheng": 240,
-    "maozhongte": 298,
-    "xisixiang": 470,
-    "shigang": 410,
-    "sifa": 238
+    "maozhongte": 279,
+    "xisixiang": 418,
+    "shigang": 391,
+    "sifa": 212
   }
 }

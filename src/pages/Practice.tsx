@@ -11,6 +11,8 @@ import { Feedback, QuestionBody } from '../components/Question'
 type Scope = 'due' | 'new' | 'mistakes' | 'all'
 type Phase = 'setup' | 'run' | 'done'
 
+type AnswerRecord = { picked: string[]; revealed: boolean }
+
 const TYPES: { key: string; label: string }[] = [
   { key: 'single', label: '单选' },
   { key: 'multi', label: '多选' },
@@ -50,6 +52,13 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
   const [idx, setIdx] = useState(boot ? Math.min(boot.s.idx, boot.queue.length - 1) : 0)
   const [picked, setPicked] = useState<string[]>(boot?.s.picked ?? [])
   const [revealed, setRevealed] = useState(boot?.s.revealed ?? false)
+  // 回看上一题时要用到每题当时的选项与是否已揭晓
+  const [records, setRecords] = useState<AnswerRecord[]>(() => {
+    if (boot?.s.records?.length) return boot.s.records
+    const arr: AnswerRecord[] = []
+    if (boot?.s.revealed) arr[boot.s.idx] = { picked: boot.s.picked, revealed: true }
+    return arr
+  })
   const [tally, setTally] = useState(boot?.s.tally ?? { right: 0, total: 0 })
 
   // 作答进度实时存入会话，刷新、切后台被回收后还能接着做
@@ -60,13 +69,14 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
       idx,
       picked,
       revealed,
+      records,
       tally,
       subject,
       types: [...types],
       scope,
       limit,
     })
-  }, [phase, queue, idx, picked, revealed, tally, subject, types, scope, limit])
+  }, [phase, queue, idx, picked, revealed, records, tally, subject, types, scope, limit])
 
   // 已确认离开时，跳转本身会触发一次 popstate，别再弹一次
   const leaving = useRef(false)
@@ -121,6 +131,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
     setTally({ right: 0, total: 0 })
     setPicked([])
     setRevealed(false)
+    setRecords([])
     setPhase('run')
   }
 
@@ -129,7 +140,21 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
     const g = grade(q, picked)
     actions.answer(q.id, g.correct)
     setRevealed(true)
+    setRecords((r) => {
+      const next = [...r]
+      next[idx] = { picked, revealed: true }
+      return next
+    })
     setTally((t) => ({ right: t.right + (g.correct ? 1 : 0), total: t.total + 1 }))
+  }
+
+  function goTo(n: number) {
+    const i = Math.max(0, Math.min(queue.length - 1, n))
+    if (i === idx) return
+    const rec = records[i]
+    setIdx(i)
+    setPicked(rec?.picked ?? [])
+    setRevealed(rec?.revealed ?? false)
   }
 
   function next() {
@@ -138,9 +163,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
       setPhase('done')
       return
     }
-    setIdx(idx + 1)
-    setPicked([])
-    setRevealed(false)
+    goTo(idx + 1)
   }
 
   if (phase === 'setup') {
@@ -254,12 +277,20 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
             <>
               <QuestionBody q={q} picked={picked} onPick={setPicked} revealed={revealed} index={idx} total={queue.length} />
               <div className="toolbar" style={{ marginTop: 16 }}>
+                <button className="btn sm" onClick={() => goTo(idx - 1)} disabled={idx === 0}>
+                  上一题
+                </button>
                 <button
                   className="btn sm ghost"
                   onClick={() => {
                     actions.answer(q.id, false)
                     setRevealed(true)
                     setTally((t) => ({ right: t.right, total: t.total + 1 }))
+                    setRecords((r) => {
+                      const next = [...r]
+                      next[idx] = { picked: [], revealed: true }
+                      return next
+                    })
                   }}
                   disabled={revealed}
                 >
@@ -324,6 +355,7 @@ interface PracticeSession {
   idx: number
   picked: string[]
   revealed: boolean
+  records?: AnswerRecord[]
   tally: { right: number; total: number }
   subject: SubjectId | 'all'
   types: string[]
