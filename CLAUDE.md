@@ -185,7 +185,7 @@ cd 政治刷题App && npm run content && npm run doc && npm run build
 
 ## 已知遗留
 
-- **APK 是 2026-10-22 的旧包**，不含本轮代码修复与新题库；改完要重新打包（`dist/` → `打包/apk/www/` → gradle assembleRelease，keystore 口令见 `打包/说明.txt`）。
+- APK 已更新到 `打包/政点-1.1.apk`（versionCode 2，2026-10-24）。重新打包必须走 `dist/` → `打包/apk/www/` → **`npx cap copy android`** → `gradlew assembleRelease`；漏掉 cap copy 会把旧前端打进包（本轮踩过）。
 - 部分长引文在 220 字处截断（见上）。
 - 2026 模拟卷只修了显眼的错字，可能还有零星 OCR 错字；`bank_audit.py` 查不出纯语义错误。
 - 部分真题的 `explain` 是“标准答案：X”式简写，质量参差，没有逐题重写。
