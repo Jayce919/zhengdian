@@ -4,6 +4,7 @@ import { questions, SUBJECT_ORDER, SUBJECT_NAMES, subjects } from '../lib/conten
 import { actions, useProgress } from '../lib/store'
 import { isDue } from '../lib/srs'
 import { grade, shuffle } from '../lib/scoring'
+import { canLeave, setNavGuard } from '../lib/navGuard'
 import { Feedback, QuestionBody } from '../components/Question'
 
 type Scope = 'due' | 'new' | 'mistakes' | 'all'
@@ -27,24 +28,73 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
   const p = useProgress()
   const autoMistakes = initial[0] === 'mistakes'
 
-  const [subject, setSubject] = useState<SubjectId | 'all'>('all')
-  const [types, setTypes] = useState<Set<QType>>(new Set(['single', 'multi']))
-  const [scope, setScope] = useState<Scope>(autoMistakes ? 'mistakes' : 'due')
-  const [limit, setLimit] = useState(20)
+  // 刷新或异常退出后，从浏览器会话里恢复上一次没做完的练习
+  const boot = useMemo(() => {
+    const s = loadSession()
+    if (!s) return null
+    const q = restoreQueue(s.ids)
+    return q.length ? { s, queue: q } : null
+  }, [])
 
-  const [phase, setPhase] = useState<Phase>(autoMistakes ? 'run' : 'setup')
-  const [queue, setQueue] = useState<Question[]>(() => (autoMistakes ? build(questions, p, 'all', new Set(['single', 'multi', 'judge']), 'mistakes', 20) : []))
-  const [idx, setIdx] = useState(0)
-  const [picked, setPicked] = useState<string[]>([])
-  const [revealed, setRevealed] = useState(false)
-  const [cardOpen, setCardOpen] = useState(false)
-  const [tally, setTally] = useState({ right: 0, total: 0 })
+  const [subject, setSubject] = useState<SubjectId | 'all'>(boot?.s.subject ?? 'all')
+  const [types, setTypes] = useState<Set<QType>>(() => new Set(boot?.s.types ?? ['single', 'multi']))
+  const [scope, setScope] = useState<Scope>(boot?.s.scope ?? (autoMistakes ? 'mistakes' : 'due'))
+  const [limit, setLimit] = useState(boot?.s.limit ?? 20)
+
+  const [phase, setPhase] = useState<Phase>(boot ? 'run' : autoMistakes ? 'run' : 'setup')
+  const [queue, setQueue] = useState<Question[]>(
+    () =>
+      boot?.queue ??
+      (autoMistakes ? build(questions, p, 'all', new Set(['single', 'multi', 'judge']), 'mistakes', 20) : []),
+  )
+  const [idx, setIdx] = useState(boot ? Math.min(boot.s.idx, boot.queue.length - 1) : 0)
+  const [picked, setPicked] = useState<string[]>(boot?.s.picked ?? [])
+  const [revealed, setRevealed] = useState(boot?.s.revealed ?? false)
+  const [cardOpen, setCardOpen] = useState(boot?.s.cardOpen ?? false)
+  const [tally, setTally] = useState(boot?.s.tally ?? { right: 0, total: 0 })
+
+  // 作答进度实时存入会话，刷新、切后台被回收后还能接着做
+  useEffect(() => {
+    if (phase !== 'run' || queue.length === 0) return
+    saveSession({
+      ids: queue.map((q) => q.id),
+      idx,
+      picked,
+      revealed,
+      cardOpen,
+      tally,
+      subject,
+      types: [...types],
+      scope,
+      limit,
+    })
+  }, [phase, queue, idx, picked, revealed, cardOpen, tally, subject, types, scope, limit])
+
+  // 离开前确认；确认离开才清掉会话，避免下次意外续上
+  useEffect(() => {
+    if (phase !== 'run') {
+      setNavGuard(null)
+      return
+    }
+    setNavGuard(() => {
+      if (!window.confirm('本次练习还没做完，离开会清空这一组的作答，确定离开？')) return false
+      clearSession()
+      return true
+    })
+    return () => setNavGuard(null)
+  }, [phase])
 
   // Android 16 预测性返回：练习中按返回先回到设置，而不是退出应用
   useEffect(() => {
     if (phase !== 'run') return
     history.pushState({ zz: 'practice-run' }, '')
-    const onPop = () => setPhase('setup')
+    const onPop = () => {
+      if (!canLeave('practice')) {
+        history.pushState({ zz: 'practice-run' }, '')
+        return
+      }
+      setPhase('setup')
+    }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [phase])
@@ -57,6 +107,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
   const q = queue[idx]
 
   function start() {
+    clearSession()
     setQueue(build(questions, p, subject, types, scope, limit))
     setIdx(0)
     setTally({ right: 0, total: 0 })
@@ -83,6 +134,7 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
 
   function next() {
     if (idx + 1 >= queue.length) {
+      clearSession()
       setPhase('done')
       return
     }
@@ -188,7 +240,13 @@ export default function Practice({ initial }: { nav: (to: string) => void; initi
         <div className="meter">
           <i style={{ width: `${((idx + (revealed ? 1 : 0)) / queue.length) * 100}%` }} />
         </div>
-        <button className="btn sm ghost" onClick={() => setPhase('done')}>
+        <button
+          className="btn sm ghost"
+          onClick={() => {
+            clearSession()
+            setPhase('done')
+          }}
+        >
           结束
         </button>
       </div>
@@ -291,4 +349,52 @@ function build(
   return shuffle(pool)
     .sort((a, b) => weight(b) - weight(a))
     .slice(0, limit)
+}
+
+const SESSION_KEY = 'zz-practice-session'
+
+interface PracticeSession {
+  ids: string[]
+  idx: number
+  picked: string[]
+  revealed: boolean
+  cardOpen: boolean
+  tally: { right: number; total: number }
+  subject: SubjectId | 'all'
+  types: QType[]
+  scope: Scope
+  limit: number
+}
+
+function saveSession(s: PracticeSession) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(s))
+  } catch {
+    /* 隐私模式或配额满时忽略 */
+  }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem(SESSION_KEY)
+  } catch {
+    /* 同上 */
+  }
+}
+
+function loadSession(): PracticeSession | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY)
+    if (!raw) return null
+    const s = JSON.parse(raw) as PracticeSession
+    if (!Array.isArray(s.ids) || s.ids.length === 0) return null
+    return s
+  } catch {
+    return null
+  }
+}
+
+function restoreQueue(ids: string[]): Question[] {
+  const byId = new Map(questions.map((q) => [q.id, q]))
+  return ids.map((id) => byId.get(id)).filter((q): q is Question => Boolean(q))
 }

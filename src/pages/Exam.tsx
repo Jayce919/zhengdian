@@ -3,6 +3,7 @@ import type { Question, SubjectId } from '../types'
 import { questions, weights, SUBJECT_NAMES, SUBJECT_ORDER, subjects } from '../lib/content'
 import { actions, useProgress } from '../lib/store'
 import { grade, scoreOf, shuffle } from '../lib/scoring'
+import { canLeave, setNavGuard } from '../lib/navGuard'
 import { Feedback, QuestionBody } from '../components/Question'
 
 type Stage = 'setup' | 'run' | 'result'
@@ -70,22 +71,124 @@ function buildPaper(mode: 'template' | 'weighted' | 'zhenti'): Paper {
   return { items: [...singlesOut, ...multisOut], bySubject }
 }
 
+function countBySubject(items: Question[]): Record<string, number> {
+  const out: Record<string, number> = {}
+  for (const q of items) out[q.subject] = (out[q.subject] ?? 0) + 1
+  return out
+}
+
+const SESSION_KEY = 'zz-exam-session'
+
+interface ExamSession {
+  ids: string[]
+  answers: Record<string, string[]>
+  idx: number
+  endAt: number
+  startedAt: number
+  minutes: number
+  mode: 'template' | 'weighted' | 'zhenti'
+}
+
+function saveSession(s: ExamSession) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(s))
+  } catch {
+    /* 隐私模式或配额满时忽略 */
+  }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem(SESSION_KEY)
+  } catch {
+    /* 同上 */
+  }
+}
+
+function loadSession(): ExamSession | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY)
+    if (!raw) return null
+    const s = JSON.parse(raw) as ExamSession
+    if (!Array.isArray(s.ids) || s.ids.length === 0) return null
+    return s
+  } catch {
+    return null
+  }
+}
+
+function restoreItems(ids: string[]): Question[] {
+  const byId = new Map(questions.map((q) => [q.id, q]))
+  return ids.map((id) => byId.get(id)).filter((q): q is Question => Boolean(q))
+}
+
 export default function Exam({ nav }: { nav: (to: string) => void }) {
   const p = useProgress()
-  const [stage, setStage] = useState<Stage>('setup')
-  const [mode, setMode] = useState<'template' | 'weighted' | 'zhenti'>(p.settings.paperMode as 'template' | 'weighted')
-  const [minutes, setMinutes] = useState(p.settings.timerMinutes)
-  const [paper, setPaper] = useState<Paper>({ items: [], bySubject: {} })
-  const [answers, setAnswers] = useState<Record<string, string[]>>({})
-  const [idx, setIdx] = useState(0)
-  const [left, setLeft] = useState(0)
-  const startedAt = useRef(0)
+
+  // 刷新或异常退出后，从会话里恢复没交卷的考试（题目、作答、剩余时间）
+  const boot = useMemo(() => {
+    const s = loadSession()
+    if (!s) return null
+    const items = restoreItems(s.ids)
+    return items.length ? { s, items } : null
+  }, [])
+
+  const [stage, setStage] = useState<Stage>(boot ? 'run' : 'setup')
+  const [mode, setMode] = useState<'template' | 'weighted' | 'zhenti'>(
+    boot?.s.mode ?? (p.settings.paperMode as 'template' | 'weighted'),
+  )
+  const [minutes, setMinutes] = useState(boot?.s.minutes ?? p.settings.timerMinutes)
+  const [paper, setPaper] = useState<Paper>(() =>
+    boot ? { items: boot.items, bySubject: countBySubject(boot.items) } : { items: [], bySubject: {} },
+  )
+  const [answers, setAnswers] = useState<Record<string, string[]>>(boot?.s.answers ?? {})
+  const [idx, setIdx] = useState(boot ? Math.min(boot.s.idx, boot.items.length - 1) : 0)
+  // 计时以截止时刻为准：切后台、锁屏被节流也不会走慢
+  const [endAt, setEndAt] = useState(boot?.s.endAt ?? 0)
+  const [left, setLeft] = useState(() =>
+    boot?.s.endAt ? Math.max(0, Math.round((boot.s.endAt - Date.now()) / 1000)) : 0,
+  )
+  const startedAt = useRef(boot?.s.startedAt ?? 0)
+
+  // 离开前确认；确认离开才清掉会话，避免下次意外续上
+  useEffect(() => {
+    if (stage !== 'run') {
+      setNavGuard(null)
+      return
+    }
+    setNavGuard(() => {
+      if (!window.confirm('本次考试还没交卷，离开会清空作答，确定离开？')) return false
+      clearSession()
+      return true
+    })
+    return () => setNavGuard(null)
+  }, [stage])
+
+  // 作答实时存入会话，刷新后能接着考
+  useEffect(() => {
+    if (stage !== 'run' || paper.items.length === 0) return
+    saveSession({
+      ids: paper.items.map((q) => q.id),
+      answers,
+      idx,
+      endAt,
+      startedAt: startedAt.current,
+      minutes,
+      mode,
+    })
+  }, [stage, paper, answers, idx, endAt, minutes, mode])
 
   // Android 16 预测性返回：考试中按返回先回到设置，而不是退出应用
   useEffect(() => {
     if (stage !== 'run') return
     history.pushState({ zz: 'exam-run' }, '')
-    const onPop = () => setStage('setup')
+    const onPop = () => {
+      if (!canLeave('exam')) {
+        history.pushState({ zz: 'exam-run' }, '')
+        return
+      }
+      setStage('setup')
+    }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [stage])
@@ -93,15 +196,24 @@ export default function Exam({ nav }: { nav: (to: string) => void }) {
   const activeSubject = subjects.length > 0
 
   useEffect(() => {
-    if (stage !== 'run') return
-    const t = setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000)
-    return () => clearInterval(t)
-  }, [stage])
+    if (stage !== 'run' || endAt === 0) return
+    const tick = () => setLeft(Math.max(0, Math.round((endAt - Date.now()) / 1000)))
+    tick()
+    const t = setInterval(tick, 500)
+    const onVis = () => {
+      if (!document.hidden) tick()
+    }
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', onVis)
+    }
+  }, [stage, endAt])
 
   useEffect(() => {
-    if (stage === 'run' && left === 0 && minutes > 0) submit()
+    if (stage === 'run' && endAt > 0 && left === 0) submit()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [left])
+  }, [left, stage, endAt])
 
   const result = useMemo(() => {
     if (stage !== 'result') return null
@@ -127,8 +239,10 @@ export default function Exam({ nav }: { nav: (to: string) => void }) {
     setPaper(pp)
     setAnswers({})
     setIdx(0)
-    setLeft(minutes * 60)
     startedAt.current = Date.now()
+    setEndAt(minutes > 0 ? startedAt.current + minutes * 60000 : 0)
+    setLeft(minutes * 60)
+    clearSession()
     setStage('run')
   }
 
@@ -152,6 +266,7 @@ export default function Exam({ nav }: { nav: (to: string) => void }) {
       max,
       seconds: Math.round((Date.now() - startedAt.current) / 1000),
     })
+    clearSession()
     setStage('result')
   }
 

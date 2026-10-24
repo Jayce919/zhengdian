@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useRoute, segments } from './lib/router'
+import { canLeave } from './lib/navGuard'
 import { useProgress } from './lib/store'
 import Home from './pages/Home'
 import Practice from './pages/Practice'
@@ -32,6 +33,13 @@ const TITLES: Record<string, [string, string]> = {
 
 export default function App() {
   const [route, nav] = useRoute()
+  // 所有跳转都过一道拦截：练习/考试进行中先确认再离开
+  const go = useCallback(
+    (to: string) => {
+      if (canLeave(to)) nav(to)
+    },
+    [nav],
+  )
   const progress = useProgress()
   const seg = segments(route)
   const page = seg[0] || 'home'
@@ -72,33 +80,33 @@ export default function App() {
           <div className="sub">{sub}</div>
         </div>
         <div className="spacer" />
-        <button className="iconbtn" title="统计" onClick={() => nav('stats')}>
+        <button className="iconbtn" title="统计" onClick={() => go('stats')}>
           <Icon name="stats" size={19} />
         </button>
-        <button className="iconbtn" title="设置" onClick={() => nav('settings')}>
+        <button className="iconbtn" title="设置" onClick={() => go('settings')}>
           <Icon name="settings" size={19} />
         </button>
       </header>
       </div>
 
       <main className="main">
-        {page === 'home' && <Home nav={nav} />}
-        {page === 'practice' && <Practice nav={nav} key={seg.slice(1).join('/')} initial={seg.slice(1)} />}
-        {page === 'exam' && <Exam nav={nav} />}
-        {page === 'theory' && <Theory nav={nav} seg={seg.slice(1)} />}
-        {page === 'mind' && <MindMap nav={nav} seg={seg.slice(1)} />}
+        {page === 'home' && <Home nav={go} />}
+        {page === 'practice' && <Practice nav={go} key={seg.slice(1).join('/')} initial={seg.slice(1)} />}
+        {page === 'exam' && <Exam nav={go} />}
+        {page === 'theory' && <Theory nav={go} seg={seg.slice(1)} />}
+        {page === 'mind' && <MindMap nav={go} seg={seg.slice(1)} />}
         {page === 'timeline' && <TimelinePage seg={seg.slice(1)} />}
-        {page === 'stats' && <Stats nav={nav} />}
-        {page === 'settings' && <Settings nav={nav} />}
+        {page === 'stats' && <Stats nav={go} />}
+        {page === 'settings' && <Settings nav={go} />}
       </main>
 
-      <nav className="bottomnav">
+      <nav className="bottomnav" aria-label="主导航">
         <div className="rail-brand">
           <span className="seal">政</span>
           <span>考研政治</span>
         </div>
         {NAV.map((n) => (
-          <button key={n.key} aria-current={active === n.key} onClick={() => nav(n.key)}>
+          <button key={n.key} aria-current={active === n.key} onClick={() => go(n.key)}>
             <span className="ico">
               <Icon name={n.ico} size={22} />
             </span>

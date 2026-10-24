@@ -179,6 +179,7 @@ export default function Theory({ seg, nav }: { nav: (to: string) => void; seg: s
           value={kw}
           onChange={(e) => setKw(e.target.value)}
           placeholder="搜索考点、关键词，如“剩余价值”“根本动力”"
+          aria-label="搜索考点"
           style={{
             width: '100%',
             border: '1px solid var(--line)',
