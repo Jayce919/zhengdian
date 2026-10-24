@@ -10,13 +10,15 @@ Vite + React 18 + TypeScript，`vite-plugin-pwa` 做离线，Capacitor 6 打包�
 没有后端，进度存浏览器 `localStorage`。
 
 ```
-考研政治/
-├─ 政治刷题App/      应用源码（git 仓库，GitHub: Jayce919/zhengdian）
-├─ 知识点/           题库与知识点的 JSON 源数据（不在仓库里）
-├─ 工具/             OCR、解析、质检、清洗脚本（不在仓库里）
-├─ 备份/             每次批量改数据前的快照
-├─ 审查/             前端体检报告、题库修正记录
-└─ 打包/             已构建的 APK 与 PWA zip
+考研政治/                      （本机工作目录）
+├─ 政治刷题App/                git 仓库，GitHub: Jayce919/zhengdian
+│  ├─ src/                     应用源码
+│  ├─ tools/                   构建脚本（build_content.mjs、render_md.mjs）
+│  ├─ 知识点/                  题库与知识点 JSON 源数据（已入库）
+│  └─ 工具/                    OCR、解析、质检、校对脚本与补丁（已入库）
+├─ 备份/                       每次批量改数据前的快照（不入库）
+├─ 审查/                       体检报告与题库修正记录（不入库）
+└─ 打包/                       已构建的 APK 与 PWA zip（不入库）
 ```
 
 ## 常用命令
@@ -182,7 +184,7 @@ cd 政治刷题App && npm run content && npm run doc && npm run build
 4. **`quote` 字段有 220 字上限**（构建时截断），所以有些引文末尾断在半句，这是生成规则不是 OCR，改它要改 `tools/build_content.mjs` 的截断逻辑。
 5. `bank_audit.py` 有 3 类误报，不要“修”：`利在千秋`/`无以至千里` 的“千”、引文里 `｜` 分栏的空格、解析里“AD为干扰选项”。
 6. 仓库 `.git/config` 里有本机代理 `http.proxy=127.0.0.1:7890`（这台机器直连 GitHub 会 reset）。换机器请删掉。
-7. `知识点/`、`工具/`、`备份/`、`审查/`、`打包/` **不在 git 仓库里**，只有 `政治刷题App/` 入库；克隆仓库只能拿到构建后的 `src/data`。
+7. `知识点/` 与 `工具/` 已在仓库内（随 `政治刷题App/` 一起提交）；`备份/`、`审查/`、`打包/` 仍只在本地。克隆仓库即可拿到源数据与全部脚本。
 
 ## 已知遗留
 
@@ -199,7 +201,7 @@ npx tsc --noEmit                                  # 0 error
 npm run content                                   # 打包完成：1054 考点 / 2245 题
 npm run doc
 npm run build
-cd .. && python 工具/bank_audit.py                # 只剩 3 类误报
+python 工具/bank_audit.py                          # 只剩 3 类误报（在 政治刷题App/ 内执行）
 ```
 
 题库改动的额外检查（结构层面）：
@@ -211,7 +213,7 @@ cd .. && python 工具/bank_audit.py                # 只剩 3 类误报
 ## 下一步可以做的
 
 1. 重新打 APK（本轮改动还没上平板）
-2. 把 `知识点/` + `工具/` 收进仓库（或拆成 `content/` 子模块），让数据可版本化
+2. ~~把 `知识点/` + `工具/` 收进仓库~~（已完成，2026-10-24）
 3. 给 `src/data` 加一个内容校验脚本并接到 CI
 4. 继续人工过一遍 2026 模拟卷与非真题题库的语义错误
 

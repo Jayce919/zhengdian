@@ -11,3 +11,9 @@ dist-single/
 .DS_Store
 Thumbs.db
 *.log
+
+# 数据与工具的运行产物
+知识点/政治_知识点背诵与速查_维护版.md
+工具/__pycache__/
+工具/review/_*.txt
+工具/badgoods/

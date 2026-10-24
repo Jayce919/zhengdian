@@ -1,0 +1,639 @@
+[
+ {
+  "id": "q-judge-001",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：时间、空间是“绝对观念”的外在表现形式",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-002",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：“时间、空间是一切事物的贮藏所”",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-003",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：客观事物的存在依赖于我们对它的认识",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-004",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：人工智能的发展使得意识具有了直接现实性",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-005",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：①没有矛盾的和谐世界是世界历史发展的最终方向",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-006",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：矛盾同一性在事物发展中的作用表现为调和矛盾双方的对立",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-007",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：真象是真实的，假象是一种错觉",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-008",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：实践是在认识活动的基础上产生和发展的",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-009",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：科学文化实践是人类最基本的实践活动",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-010",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：实践创新以理论创新为基础",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-011",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：事物的本质可以直接为人的感官所感知",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-012",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：价值是主体的欲望、情感和兴趣，与客体无关",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-013",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：人们改造自然的一切行为都会遭到“自然界的报复”",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-014",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：社会发展的过程同自然界的发展过程一样都是自觉的",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-015",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：科技创新是社会发展的根本动力",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-016",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：历史人物对历史发展的作用都是积极的",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-017",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：劳动力的价值借助于抽象劳动转移到新产品中",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-018",
+  "type": "judge",
+  "subject": "mayuan",
+  "partId": "mayuan-01",
+  "stem": "判断：社会劳动生产率提高，单位时间的价值量降低",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-019",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：邓小平理论是中国革命、建设和改革开放的科学指南",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-020",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：分清敌友是新民主主义革命理论的核心问题",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-021",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：无产阶级领导权是新民主主义革命的主要内容",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-022",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：新民主主义革命和社会主义革命的任务相同",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-023",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：新民主主义革命属于世界无产阶级革命性质",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-024",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：①资本主义的发展阶段在中国是不可避免的",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-025",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：①无产阶级是中国革命的主力军",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-026",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：“两头小，中间大”中“两头”是指农民和城市小资产阶级",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-027",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：统一战线中必须坚持的原则",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-028",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：合作社经济和国家资本主义经济都是独立的经济形态",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-029",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：全行业公私合营在分配上实行“四马分肥”",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-030",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：社会主义改造的基本完成标志着我国步人了社会主义改革时期",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-031",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：①中华人民共和国的成立是中国进入社会主义社会最主要的标志",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-032",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：初级阶段的社会主义是过渡时期的社会",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-033",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：①计划和市场是不能兼容的",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-034",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：计划和市场都属于社会基本制度的范畴",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-035",
+  "type": "judge",
+  "subject": "maozhongte",
+  "partId": "maozhongte-01",
+  "stem": "判断：在于：国有经济是否起主导作用",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-036",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：洋务运动的首要目的是加强海防、边防",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-037",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：洋务运动的指导思想是“自强”“求富”",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-038",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：洋务运动是一场思想解放运动",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-039",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：①维新派自身的局限性之→表现在不敢鼓吹民权",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-040",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：维新派成功地建立了存在百日的君主立宪制度",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-041",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：团结一切革命力量的强有力的核心",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-042",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：①戊戌维新运动和辛亥革命都提出了明确的反帝反封建的纲领",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-043",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：辛亥革命是中国民族资产阶级登上政治舞台的第一次表演",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-044",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：中国共产党一开始就把党的工作中心放在农村",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-045",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：瓦窑堡会议提出了抗日救国十大纲领",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-046",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：中共七大标志着整风运动胜利结束",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-047",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：①抗日民族统一战线中的中间势力包括城市小资产阶级",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-048",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：①“左”倾机会主义属于思想路线错误",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ },
+ {
+  "id": "q-judge-049",
+  "type": "judge",
+  "subject": "shigang",
+  "partId": "shigang-01",
+  "stem": "判断：创中国特色社会主义新理论的宣言书",
+  "answer": false,
+  "explain": "该表述与教材相反，属《背诵手册》下册「经典干扰项总结」列出的典型错项",
+  "refs": [
+   "背诵手册下 经典干扰项总结"
+  ],
+  "source": "textbook"
+ }
+]

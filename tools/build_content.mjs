@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url'
 const here = path.dirname(fileURLToPath(import.meta.url))
 const appRoot = path.resolve(here, '..')
 const base = path.resolve(appRoot, '..')
-const SRC = path.join(base, '知识点')
+const SRC = path.join(appRoot, '知识点')
 const DST = path.join(appRoot, 'src', 'data')
 const OCR = path.join(base, '原始OCR')
 
