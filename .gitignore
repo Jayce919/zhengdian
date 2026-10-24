@@ -1,0 +1,13 @@
+# 依赖
+node_modules/
+
+# 构建产物（dist/ 由 npm run build 生成，APK 与 PWA 包见 打包/）
+dist/
+dist-single/
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

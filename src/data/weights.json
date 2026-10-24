@@ -1,0 +1,8 @@
+{
+  "mayuan": { "single": 4, "multi": 5, "score": 14, "examShare": 22 },
+  "maozhongte": { "single": 1, "multi": 2, "score": 5, "examShare": 13 },
+  "xisixiang": { "single": 3, "multi": 3, "score": 9, "examShare": 22 },
+  "shigang": { "single": 4, "multi": 3, "score": 10, "examShare": 15 },
+  "sifa": { "single": 2, "multi": 2, "score": 6, "examShare": 15 },
+  "shizheng": { "single": 2, "multi": 2, "score": 6, "examShare": 13 }
+}
